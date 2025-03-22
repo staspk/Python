@@ -12,6 +12,9 @@ class Color:
     
     @staticmethod
     def from_int(color: int) -> Color:
+        """
+        static constructor
+        """
         red   = color & 0xFF
         green = (color >> 8) & 0xFF
         blue  = (color >> 16) & 0xFF
@@ -20,6 +23,9 @@ class Color:
     
     @staticmethod
     def from_hex(string: str) -> Color:
+        """
+        static constructor
+        """
         if string.startswith("#"):
             string = string[1:]
             
