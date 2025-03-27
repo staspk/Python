@@ -23,7 +23,5 @@ def load_file(file:str) -> str:
     
 
 def remove_html_tags(text):
-    # The regular expression '<.*?>' matches any substring that starts with '<' and ends with '>',
-    # using a non-greedy match, i.e. the least amount of chars between < > is the goal
     clean_text = re.sub(r'<.*?>', '', text)
     return clean_text
