@@ -1,5 +1,6 @@
 import json, re
-from print import print_red
+from kozubenko.print import print_red
+
 
 def load_json(file:str) -> any:
     """
