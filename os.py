@@ -1,7 +1,7 @@
 import os
 
 def Downloads_Directory() -> str:
-    """
+    r"""
     - **Windows:** returns downloads value under: `Registry:SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Shell Folders`\n
     - **Mac/Linux:** returns `~/Downloads`
     """
@@ -22,7 +22,7 @@ def File(path:str, *paths:str, file:str=None):
     """
     returns a path string your os needs. path & *paths created, if non-existent
     """
-    dir = Directory(path, paths)
+    dir = Directory(path, *paths)
 
     if(file):
         return os.path.join(dir, file)
@@ -34,7 +34,7 @@ def Directory(path:str, *paths:str) -> str:
     returns a path string your os needs. path (including parent dirs) created, if non-existent
     """
 
-    dir = os.path.join(path, paths)
+    dir = os.path.join(path, *paths)
     os.makedirs(dir, exist_ok=True)
 
-    return Directory
+    return dir
