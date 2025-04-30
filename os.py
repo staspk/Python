@@ -17,6 +17,8 @@ def Downloads_Directory() -> str:
     elif os.name == 'posix':  # Both Mac and Linux
         return os.path.join(os.path.expanduser("~"), "Downloads")
 
+def Parent(path:str) -> str:
+    return os.path.dirname(path)
 
 def File(path:str, *paths:str, file:str=None):
     """
