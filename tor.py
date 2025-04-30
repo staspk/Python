@@ -1,56 +1,108 @@
-import os
-import subprocess
-from definitions import TOR_EXE, TORRC
+import os, subprocess, random
+import requests
 from stem import Signal
 from stem.control import Controller
+from kozubenko.os import Parent
+from kozubenko.print import print_dark_red, print_green, print_red
 
 
 class Tor:
-    TOR_EXE: str = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'tor.exe')     # ./../tor.exe
-    TORRC: str = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'torrc')         # ./../torrc
+    TOR_EXE : str = os.path.join(Parent(__file__), 'tor.exe')
+    TORRC   : str = os.path.join(Parent(__file__), 'torrc')
 
-    _process: subprocess.Popen = None
+    def __init__(self):
+        self._socks_port   : int = None 
+        self._control_port : int = None
+        self._process      : subprocess.Popen = None
 
-    def start(tor_exe:str = TOR_EXE, torrc:str = TORRC):
-        Tor.kill_running_tor_processes()
-        Tor._process = subprocess.Popen([tor_exe, "-f", torrc], creationflags=subprocess.CREATE_NO_WINDOW)
+        if not os.path.exists(Tor.TOR_EXE) or not os.path.exists(Tor.TORRC):
+            raise Exception('Tor.exe/torrc required to instantiate Tor')
+        
+        with open(Tor.TORRC, 'r') as file:
+            for line in file:
+                key, value = (line.strip()).split(' ', 1)
+                if(key == 'SocksPort' and value):
+                    self._socks_port = int(value)
+                if(key == 'ControlPort' and value):
+                    self._control_port = int(value)
 
-    def stop():
-        if(Tor._process):
-            Tor._process.terminate()
-            Tor._process.wait()
+        if self._socks_port is None:
+            raise Exception("To instantiate Tor(), must have line in torrc file: 'SocksPort 9050'")
+        
+        self._start()
 
-    def new_identity(port=9051):
+    def test_request(self) -> str:
+        """
+        returns the ip used in get request as string
+        """
+        return requests.get(url='https://api.ipify.org', proxies=self.proxies_as_dict()).text
+
+    def _start(self):
+        if os.name == 'nt':
+            Tor.kill_windows_tor_processes()
+            self._process:subprocess.Popen = subprocess.Popen(
+                [Tor.TOR_EXE, '-f', Tor.TORRC],
+                creationflags=subprocess.CREATE_NO_WINDOW,                # flag is windows only, fyi
+            )
+            print_green(f'Tor started.')      
+        else:
+            raise Exception('os not supported')
+        
+    def proxies_as_dict(self) -> dict[str, str]:
+        """
+        returns a proxies dict, e.g:\n
+        {
+            'http': self.proxy(),
+            'https': self.proxy()
+        }
+        """
+        proxy = self.proxy()
+        return {
+            'http': proxy,
+            'https': proxy
+        }
+        
+    def proxy(self) -> str:
+        """
+        returns a proxy string, e.g: `socks5h://{random_username}:password@127.0.0.1:{self._socks_port}`\n
+        note: tor.exe uses: 9050, tor-browser uses: 9150. (nebulous) claims of "better success" with 9150
+        """
+        username = str(random.randint(10000, 99999))
+        return f'socks5h://{username}:password@127.0.0.1:{self._socks_port}'
+
+    def stop(self):
+        if(self._process):
+            self._process.terminate()
+
+
+    def new_identity(self):
+        if(self._control_port is None):
+            raise RuntimeError("Tor().new_identity(), requires line in torrc file: 'ControlPort 9051'")
+        
         try:
-            with Controller.from_port(port=port) as controller:
-                controller.authenticate()
-                controller.signal(Signal.NEWNYM)
+            with Controller.from_port(port=self._control_port) as control:
+                control.authenticate()
+                control.signal(Signal.NEWNYM)
         except Exception as e:
             raise Exception(f'Failed to get new identity: {e}')
         
-    def kill_running_tor_processes():
-        try:
-            result = subprocess.run(
-                ['tasklist', '/FI', 'IMAGENAME eq tor.exe'],
-                capture_output=True, text=True
-            )
+    def kill_windows_tor_processes():
+        result = subprocess.run(
+            ['tasklist', '/FI', 'IMAGENAME eq tor.exe'],        # list, filter, for 'tor.exe'
+            capture_output=True,                                # capture stdout/stderr
+            text=True                                           # result should be str, not byte obj
+        )
 
-            if "tor.exe" in result.stdout:
-                subprocess.run(['taskkill', '/F', '/IM', 'tor.exe'], capture_output=True)
+        if "tor.exe" in result.stdout:
+            print_red('Tor.kill_windows_tor_processes() tor.exe process(es) found.')
+            result = subprocess.run(['taskkill', '/F', '/IM', 'tor.exe'], capture_output=True)
+            if(result.returncode == 0):
+                print_red('Tor.kill_windows_tor_processes(): Success')
+            else:
+                print_dark_red(f'Tor.kill_windows_tor_processes(): result.returncode: {result.returncode}')
 
-        except Exception as e:
-            print(f"Error terminating tor.exe: {e}")
-
-    # def check_ip():
-    #     if(Tor._process):
-    #         proxies = {
-    #             'http': 'socks5h://127.0.0.1:9050',
-    #             'https': 'socks5h://127.0.0.1:9050'
-    #         }
-
-    #         try:
-    #             response = requests.get('https://api.ipify.org', proxies=proxies, timeout=10)
-    #             print('Your Tor IP is:', response.text)
-    #         except requests.RequestException as e:
-    #             print('Request failed:', e)
+    def __enter__(self):
+        return self
     
+    def __exit__(self, type, value, traceback):
+        self.stop()
