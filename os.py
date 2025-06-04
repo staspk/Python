@@ -40,3 +40,9 @@ def Directory(path:str, *paths:str) -> str:
     os.makedirs(dir, exist_ok=True)
 
     return dir
+
+def TestPath(path:str):
+    """
+    Equivalent to Powershell's Test-Path
+    """
+    return os.path.exists(path)
