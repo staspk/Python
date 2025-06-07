@@ -1,16 +1,31 @@
 import random, string
 
+def AssertBool(var_name:str, _bool):
+    """
+    Use to enforce type annotations. Will raise Exception if _bool is not a bool.
+    """
+    if type(_bool) is not bool:
+        raise Exception(f"AssertBool({var_name}): must be a bool (True or False), not: {type(_bool)}")
 
-def AssertClass(var_name:str, obj, class_type):
-    if type(obj) is not class_type:
-        raise Exception(f"AssertClass({var_name}): must be a {class_type.__name__}, not: {type(obj).__name__}")
+def AssertClass(var_name:str, obj, _class):
+    """
+    Use to enforce type annotations. Will raise Exception if obj is not a type of _class.
+    """
+    if type(obj) is not _class:
+        raise Exception(f"AssertClass({var_name}): must be a {_class.__name__}, not: {type(obj).__name__}")
     
-def AssertList(var_name:str, the_list:list, min_len:int=1, max_len:int=None):
-    if not isinstance(the_list, list):
-        raise Exception(f"AssertList({var_name}): must be a list, not: {type(the_list)}")
-    if len(the_list) < min_len:
+def AssertList(var_name:str, _list:list, min_len:int=None, max_len:int=None):
+    """
+    Use to enforce type annotations. Will raise Exception:
+    * if _list is not a list
+    * len(_list) < min_len (*optional*)
+    * len(_list) > max_len (*optional*)
+    """
+    if not type(_list) is list:
+        raise Exception(f"AssertList({var_name}): must be a list, not: {type(_list)}")
+    if(min_len) and len(_list) < min_len:
         raise Exception(f"AssertList({var_name}): length of list under min_len: {min_len}")
-    if(max_len) and len(the_list) > max_len:
+    if(max_len) and len(_list) > max_len:
         raise Exception(f"AssertList({var_name}): length of list exceeds max_len: {max_len}")
 
 class Utils:
