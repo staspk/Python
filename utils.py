@@ -1,3 +1,4 @@
+import os
 import random, string
 
 def AssertBool(var_name:str, _bool):
@@ -13,7 +14,21 @@ def AssertClass(var_name:str, obj, _class):
     """
     if type(obj) is not _class:
         raise Exception(f"AssertClass({var_name}): must be a {_class.__name__}, not: {type(obj).__name__}")
-    
+
+def AssertInt(var_name:str, _int:int, min_val:int=None, max_val:int=None):
+    """
+    Use to enforce type annotations. Will raise Exception:
+    * if _int is not a int
+    * len(_list) < min_val (*optional*)
+    * len(_list) > max_val (*optional*)
+    """
+    if type(_int) is not int:
+        raise Exception(f"AssertInt({var_name}): must be an int, not: {type(_int)}")
+    if(min_val) and _int < min_val:
+        raise Exception(f"AssertInt({var_name}): value of int < min_val: {min_val}")
+    if(max_val) and _int > max_val:
+        raise Exception(f"AssertInt({var_name}): value of int > max_val: {max_val}")
+
 def AssertList(var_name:str, _list:list, min_len:int=None, max_len:int=None):
     """
     Use to enforce type annotations. Will raise Exception:
@@ -27,6 +42,14 @@ def AssertList(var_name:str, _list:list, min_len:int=None, max_len:int=None):
         raise Exception(f"AssertList({var_name}): length of list under min_len: {min_len}")
     if(max_len) and len(_list) > max_len:
         raise Exception(f"AssertList({var_name}): length of list exceeds max_len: {max_len}")
+
+def AssertPathExists(var_name:str, path:str):
+    """
+    Use to enforce path exists. If not, raises Exception.
+    * Equivalent to Powershell's Test-Path.
+    """
+    if not os.path.exists(path):
+        raise Exception(f"parse_footnotes_html({var_name}): html file to parse does not exist. IN_HTML: {IN_HTML}")
 
 class Utils:
     def get_randomized_string(str_length):
