@@ -41,7 +41,7 @@ def Directory(path:str, *paths:str) -> str:
 
     return dir
 
-def TestPath(path:str):
+def TestPath(path:str) -> bool:
     """
     Equivalent to Powershell's Test-Path
     """
