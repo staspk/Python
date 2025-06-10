@@ -49,7 +49,7 @@ def AssertPathExists(var_name:str, path:str):
     * Equivalent to Powershell's Test-Path.
     """
     if not os.path.exists(path):
-        raise Exception(f"parse_footnotes_html({var_name}): html file to parse does not exist. IN_HTML: {IN_HTML}")
+        raise Exception(f"parse_footnotes_html({var_name}): html file to parse does not exist. var_name: {path}")
 
 class Utils:
     def get_randomized_string(str_length):
