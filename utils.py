@@ -1,21 +1,21 @@
 import os
 import random, string
 
-def AssertBool(var_name:str, _bool):
+def assert_bool(var_name:str, _bool):
     """
     Use to enforce type annotations. Will raise Exception if _bool is not a bool.
     """
     if type(_bool) is not bool:
         raise Exception(f"AssertBool({var_name}): must be a bool (True or False), not: {type(_bool)}")
 
-def AssertClass(var_name:str, obj, _class):
+def assert_class(var_name:str, obj, _class):
     """
     Use to enforce type annotations. Will raise Exception if obj is not a type of _class.
     """
     if type(obj) is not _class:
         raise Exception(f"AssertClass({var_name}): must be a {_class.__name__}, not: {type(obj).__name__}")
 
-def AssertInt(var_name:str, _int:int, min_val:int=None, max_val:int=None):
+def assert_int(var_name:str, _int:int, min_val:int=None, max_val:int=None):
     """
     Use to enforce type annotations. Will raise Exception:
     * if _int is not a int
@@ -29,7 +29,7 @@ def AssertInt(var_name:str, _int:int, min_val:int=None, max_val:int=None):
     if(max_val) and _int > max_val:
         raise Exception(f"AssertInt({var_name}): value of int > max_val: {max_val}")
 
-def AssertList(var_name:str, _list:list, min_len:int=None, max_len:int=None):
+def assert_list(var_name:str, _list:list, min_len:int=None, max_len:int=None):
     """
     Use to enforce type annotations. Will raise Exception:
     * if _list is not a list
@@ -43,7 +43,7 @@ def AssertList(var_name:str, _list:list, min_len:int=None, max_len:int=None):
     if(max_len) and len(_list) > max_len:
         raise Exception(f"AssertList({var_name}): length of list exceeds max_len: {max_len}")
 
-def AssertPathExists(var_name:str, path:str):
+def assert_path_exists(var_name:str, path:str):
     """
     Use to enforce path exists. If not, raises Exception.
     * Equivalent to Powershell's Test-Path.
