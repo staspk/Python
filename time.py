@@ -13,9 +13,9 @@ class Timer:
         elapsed = (time.perf_counter() - Timer.start_time) * 1000                          #   converts elapsed from ns to ms
         if elapsed > 1000:                                                                 #   if elapsed more than 1 second:
             elapsed = elapsed / 1000                                                       #
-            print_yellow(f'{timed_operation_title} Operation timed at: {elapsed:.3f}s')           #       convert and print in seconds, like: 1.234s 
+            print_yellow(f'{timed_operation_title} Operation timed at: {elapsed:.3f}s')    #       convert and print in seconds, like: 1.234s 
         else:                                                                              #   else:
-            print_yellow(f'{timed_operation_title} Operation timed at: {elapsed:.3f}ms')          #        print in ms, like:                 123.456ms or 0.000ms under 500ns
+            print_yellow(f'{timed_operation_title} Operation timed at: {elapsed:.3f}ms')   #        print in ms, like:                 123.456ms or 0.000ms under 500ns
 
     def stop():
         elapsed = (time.perf_counter() - Timer.start_time) * 1000
@@ -30,12 +30,14 @@ class Timer:
 class Time:
     def local_time() -> str:
         """
-        returns local_time in format: `2025-03-18 16:30:55`
+        returns local_time in format:\n
+        `2025-03-18 16:30:55`
         """
         return datetime.now().strftime('%Y-%m-%d %H:%M:%S')
     
     def local_time_as_legal_filename() -> str:
         """
-        returns local_time in format that won't throw exception if used as filename: `2025-03-18 16:30:55`
+        returns local_time in format that won't throw exception if used as filename:\n
+        `2025-03-18 16:30:55`
         """
-        return datetime.now().strftime('%Y-%m-%d_%H.%M.%S')
+        return datetime.now().strftime('%Y-%m-%d %H.%M.%S')
