@@ -38,7 +38,7 @@ def assert_list(var_name:str, _list:list, min_len:int=None, max_len:int=None, re
     * returnBool (*optional*)
     """
     if not returnBool:    
-        if not isinstance(_list) is list:
+        if not isinstance(_list, list):
             raise Exception(f"assert_list({var_name}): must be a list, not: {type(_list)}")
         if(min_len) and len(_list) < min_len:
             raise Exception(f"assert_list({var_name}): length of list under min_len: {min_len}")
