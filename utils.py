@@ -66,15 +66,8 @@ class Utils:
     def get_randomized_string(str_length):
         return ''.join(random.choices(string.ascii_letters, k=str_length))
     
-    def list_to_str(list:list[str], char_separator = " "):
+    def list_to_str(_list:list[str], char_separator = " "):
         """
-        `list_to_str(['a', 'b', 'c'], ';') -> 'a;b;c'`
+        `list_to_str(['a', 'b', 'c'], ';') -> "a;b;c"`
         """
-        string = ""
-        for i in range(len(list)):
-            if i == (len(list) - 1):
-                string += list[i]
-            else:
-                string += list[i] + char_separator
-        
-        return string
+        return char_separator.join(_list)
