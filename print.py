@@ -1,11 +1,21 @@
 import sys
 
-def print_list(list:list):
-    for item in list:
+def print_list(_list:list):
+    """
+    Recommended:
+     `import pprint`
+     `pprint.pprint(_list)`
+    """
+    for item in _list:
         print(f'{item}\n')
 
-def print_dict(dict:dict):
-    for key, value in dict.items():
+def print_dict(_dict:dict):
+    """
+    Recommended:
+     `import pprint`
+     `pprint.pprint(_dict)`
+    """
+    for key, value in _dict.items():
         print(f'{key}: {value}\n')
     
 def print_yellow(text:str, new_line=True):
