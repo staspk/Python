@@ -8,6 +8,13 @@ def assert_bool(var_name:str, _bool):
     if type(_bool) is not bool:
         raise Exception(f"assert_bool({var_name}): must be a bool (True or False), not: {type(_bool)}")
 
+def assert_str(var_name:str, _str):
+    """
+    Use to enforce type annotations. Will raise Exception if _str is not a _str.
+    """
+    if type(_str) is not str:
+        raise Exception(f"assert_bool({var_name}): must be a str, not: {type(_str)}")
+
 def assert_class(var_name:str, obj, _class):
     """
     Use to enforce type annotations. Will raise Exception if obj is not a type of _class.
