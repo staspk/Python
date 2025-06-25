@@ -1,5 +1,17 @@
-import os
+import sys, os
 import random, string
+
+
+def ScriptArg_1(default_value=None) -> str:
+    """
+    returns `sys.argv[1]`, default_value, or raises Exception if both are missing
+    """
+    if len(sys.argv) < 2:
+        if default_value is not None:
+            return default_value
+        raise Exception(f"sys.argv[1] does not exist && no default_value passed into ScriptArg_1. len(sys.argv): {len(sys.argv)}")
+    
+    return sys.argv[1]
 
 def assert_bool(var_name:str, _bool):
     """
