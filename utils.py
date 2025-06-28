@@ -13,6 +13,12 @@ def ScriptArg_1(default_value=None) -> str:
     
     return sys.argv[1]
 
+def try_parse_int(to_parse:any) -> int | None:
+    try:
+        return int(to_parse)
+    except (ValueError, TypeError):
+        return None
+
 def assert_bool(var_name:str, _bool):
     """
     Use to enforce type annotations. Will raise Exception if _bool is not a bool.
@@ -71,7 +77,6 @@ def assert_list(var_name:str, _list:list, min_len:int=None, max_len:int=None, re
         if max_len is not None and len(_list) > max_len:
             return False
         return True
-
 
 def assert_path_exists(var_name:str, path:str):
     """
