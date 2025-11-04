@@ -1,8 +1,16 @@
 import os
 
+
+def Parent(path:str) -> str:
+    return os.path.dirname(path)
+
+def TestPath(path:str) -> bool:
+    """Equivalent to Powershell's `Test-Path`"""
+    return os.path.exists(path)
+
 def Downloads_Directory() -> str:
-    r"""
-    - **Windows:** returns downloads value under: `Registry:SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Shell Folders`\n
+    """
+    - **Windows:** returns downloads value under: `Registry:SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Shell Folders`
     - **Mac/Linux:** returns `~/Downloads`
     """
     if os.name == 'nt':
@@ -16,33 +24,57 @@ def Downloads_Directory() -> str:
         
     elif os.name == 'posix':  # Both Mac and Linux
         return os.path.join(os.path.expanduser("~"), "Downloads")
-
-def Parent(path:str) -> str:
-    return os.path.dirname(path)
-
-def File(path:str, *paths:str, file:str=None):
-    """
-    returns a path string your os needs. path & *paths created, if non-existent
-    """
-    dir = Directory(path, *paths)
-
-    if(file):
-        return os.path.join(dir, file)
     
-    return dir
-
-def Directory(path:str, *paths:str) -> str:
+class Path(str):
     """
-    returns a path string your os needs. path (including parent dirs) created, if non-existent
-    """
+    Allows one to use `Path` constructor instead of `os.path.join`. Is a `str`, at it's core.
 
-    dir = os.path.join(path, *paths)
-    os.makedirs(dir, exist_ok=True)
-
-    return dir
-
-def TestPath(path:str) -> bool:
+    **Example:**
+        >>>  Path(SPOTIFY_USER_DATA_DIR, self.name, 'Spotify Extended Streaming History')
     """
-    Equivalent to Powershell's Test-Path
+    def __new__(cls, path, *paths:str):
+        return super(Path, cls).__new__(cls, os.path.join(path, *paths))
+
+class File(Path):
     """
-    return os.path.exists(path)
+    inherits `Path` -> allows you to use `File()` constructor instead of `os.path.join`. Is a `str`, at it's core.
+    """
+    @staticmethod
+    def exists(path:str, *paths:str) -> str|None:
+        """
+        Returns the `path`, or `False`
+        """
+        file = os.path.join(path, *paths)
+        if(os.path.isfile(file)):
+            return file
+        return None
+    
+class Directory(Path):
+    """
+    inherits `Path` -> allows you to use `Directory()` constructor instead of `os.path.join`. Is a `str`, at it's core.
+    """
+    @staticmethod
+    def exists(path:str, *paths:str) -> str|None:
+        """
+        Returns the `path`, or `False`
+        """
+        dir = os.path.join(path, *paths)
+        if(os.path.isdir(dir)):
+            return dir
+        return None
+    
+    @staticmethod
+    def files(path:str, str:str) -> list[str]:
+        """
+        Returns a `List` of absolute paths of files at `path` with `str in filename`
+
+        **Example:**
+        >>>  if(files := Directory.files(EXTENDED_STREAMING_HISTORY, 'Streaming_History_Audio')):
+        """
+        files:list[File] = []
+        if(os.path.exists(path)):
+            for file in os.listdir(path):
+                if str in file:
+                    files.append(File(os.path.join(path, file)))
+        return files
+    
