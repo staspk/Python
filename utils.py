@@ -87,8 +87,6 @@ def assert_path_exists(var_name:str, path:str):
         raise Exception(f"assert_path_exists({var_name}): html file to parse does not exist. var_name: {path}")
 
 class Utils:
-    def get_randomized_string(str_length):
-        return ''.join(random.choices(string.ascii_letters, k=str_length))
     
     def list_to_str(_list:list[str], char_separator = " "):
         """
