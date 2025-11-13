@@ -39,6 +39,8 @@ class File(Path):
     """
     inherits `Path` -> allows you to use `File()` constructor instead of `os.path.join`. Is a `str`, at it's core.
     """
+    def fp(self, mode='w', encoding='UTF-16'): return open(self, mode, encoding=encoding)
+    
     def contents(self, encoding='UTF-16'):
         with open(self, 'r', encoding=encoding) as file:
             return file.read()
