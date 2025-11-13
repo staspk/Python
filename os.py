@@ -8,6 +8,16 @@ def TestPath(path:str) -> bool:
     """Equivalent to Powershell's `Test-Path`"""
     return os.path.exists(path)
 
+def Application_Data_Directory(app_name:str) -> str:
+    """
+    - **Windows:** *`C:/Users/{user}/AppData/Roaming/{ApplicationName}`*  
+    - **Mac/Linux:** *`home/{user}/.{ApplicationName}/`*
+    """
+    if os.name == 'nt': path = os.path.join(os.getenv("APPDATA"), app_name)
+    else:               path = os.path.join(os.path.expanduser("~"), f'.{app_name}')
+    os.makedirs(path, exist_ok=True)
+    return path
+
 def Downloads_Directory() -> str:
     r"""
     - **Windows:** returns downloads value under: `Registry:SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Shell Folders`
@@ -66,6 +76,13 @@ class File(Path):
         if(os.path.isfile(file)):
             return file
         return None
+    
+class LogFile(File):
+    def prepend(self, text:str):
+        if File.exists(self):
+            with open(self, 'r', encoding='utf-8') as file: existing_text = file.read()
+        else: existing_text = ""
+        with open(self, 'w', encoding='utf-8') as file: file.write(text + existing_text)
 
 class Directory(Path):
     """
