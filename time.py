@@ -1,7 +1,6 @@
 from datetime import datetime
 import time
-
-from kozubenko.print import print_yellow
+from .print import Print
 
 class Timer:
     start_time: float = None
@@ -13,17 +12,17 @@ class Timer:
         elapsed = (time.perf_counter() - Timer.start_time) * 1000                          #   converts elapsed from ns to ms
         if elapsed > 1000:                                                                 #   if elapsed more than 1 second:
             elapsed = elapsed / 1000                                                       #
-            print_yellow(f'{timed_operation_title} Operation timed at: {elapsed:.3f}s')    #       convert and print in seconds, like: 1.234s 
+            Print.yellow(f'{timed_operation_title} Operation timed at: {elapsed:.3f}s')    #       convert and print in seconds, like: 1.234s 
         else:                                                                              #   else:
-            print_yellow(f'{timed_operation_title} Operation timed at: {elapsed:.3f}ms')   #        print in ms, like:                 123.456ms or 0.000ms under 500ns
+            Print.yellow(f'{timed_operation_title} Operation timed at: {elapsed:.3f}ms')   #        print in ms, like:                 123.456ms or 0.000ms under 500ns
 
     def stop():
         elapsed = (time.perf_counter() - Timer.start_time) * 1000
         if elapsed > 1000:
             elapsed = elapsed / 1000
-            print_yellow(f'Operation timed at: {elapsed:.3f}s')
+            Print.yellow(f'Operation timed at: {elapsed:.3f}s')
         else:
-            print_yellow(f'Operation timed at: {elapsed:.3f}ms')
+            Print.yellow(f'Operation timed at: {elapsed:.3f}ms')
 
         Timer.start_time = None
 
