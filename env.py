@@ -8,28 +8,36 @@ class Env:
     loaded = False
     mutex = threading.Lock()
 
-    def Load(key_to_delete:str = None):
+    def Load(keys_to_delete = []):
         Env.Vars = {}
         if os.path.exists(Env.PATH_TO_ENV_FILE):
             with open(Env.PATH_TO_ENV_FILE, 'r') as file:
                 for line in file:
                     if '=' in line:                                     # Each line must have a "=", truthy (string) key,value, to be written into the record
                         key, value = (line.strip()).split('=', 1)       
-                        if key and key != key_to_delete:                #  key_to_delete deleted
+                        if key and key not in keys_to_delete:
                             Env.Vars[key] = value
         Env.overwrite()
         Env.loaded = True
 
-    def Save(key:str, value:str):
+    def Save(data:dict|str, value:str=None):
+        """ Supports saving either a single `key`/`value`, or saving a `dict` of `data` """
+        if Env.loaded is False: Env.Load()
         Env.mutex.acquire()
-        if key and value:
-            if Env.loaded is False: Env.Load()
-            Env.Vars[key] = value
-            Env.overwrite()
+
+        if isinstance(data, dict):
+            for k, v in data.items():
+                if k and v: Env.Vars[k] = v
+
+        elif data and value:
+            Env.Vars[data] = value
+
+        Env.overwrite()
         Env.mutex.release()
-        
-    def Delete(key:str):
-        Env.Load(ENV, key_to_delete=key)
+
+    def Delete(key:str|list):
+        if(isinstance(key, str)): key=[key]
+        Env.Load(ENV, keys_to_delete=key)
 
     def overwrite():
         directory = os.path.dirname(Env.PATH_TO_ENV_FILE)
