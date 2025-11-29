@@ -1,5 +1,5 @@
 from datetime import datetime as dt
-from kozubenko.os import Application_Data_Directory, LogFile
+from .os import Application_Data_Directory, LogFile
 
 
 class Log():
