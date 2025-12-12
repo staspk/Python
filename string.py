@@ -8,3 +8,8 @@ class String():
         for item in _list:
             _str += f'{item}\n\n'
         return _str[:-1]
+
+    def isEmptyOrWhitespace(string:str) -> bool:
+        if not string or string.isspace():
+            return True
+        return False
