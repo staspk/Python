@@ -1,4 +1,5 @@
 import os
+from typing import Self
 
 
 def WINDOWS_APPDATA(): return os.getenv("APPDATA")
@@ -65,8 +66,13 @@ class File(Path):
         with open(self, 'w', encoding=encoding) as file:
             file.write(_str)
 
-    @staticmethod
-    def exists(path:str, *paths:str) -> str|None:
+    def exists(self) -> Self|False:
+        if(os.path.isfile(self)):
+            return self
+        return None
+
+    
+    def Exists(path:str, *paths:str) -> str|None:
         """
         Returns the `path`, or `False`
         """
@@ -77,7 +83,7 @@ class File(Path):
     
 class LogFile(File):
     def prepend(self, text:str):
-        if File.exists(self):
+        if File.Exists(self):
             with open(self, 'r', encoding='utf-8') as file: existing_text = file.read()
         else: existing_text = ""
         with open(self, 'w', encoding='utf-8') as file: file.write(text + existing_text)
