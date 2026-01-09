@@ -2,6 +2,7 @@ import os
 from typing import Self
 
 
+C_DRIVE = "C:\\"
 def WINDOWS_APPDATA(): return os.getenv("APPDATA")
 
 def Parent(path:str) -> str:
@@ -54,17 +55,17 @@ class File(Path):
         with open(self, 'r', encoding=encoding) as file:
             return file.read()
         
-    def append(self, _str:str, encoding='UTF-16'):
+    def append(self, string:str, encoding='UTF-16'):
         directory = os.path.dirname(self)
         if not os.path.exists(directory): os.makedirs(directory, exist_ok=True)
         with open(self, 'a', encoding=encoding) as file:
-            file.write(_str)
+            file.write(string)
 
-    def save(self, _str:str, encoding='UTF-16'):
+    def save(self, string:str, encoding='UTF-16'):
         directory = os.path.dirname(self)
         if not os.path.exists(directory): os.makedirs(directory, exist_ok=True)
         with open(self, 'w', encoding=encoding) as file:
-            file.write(_str)
+            file.write(string)
 
     def exists(self) -> Self|False:
         if(os.path.isfile(self)):
