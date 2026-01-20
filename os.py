@@ -1,4 +1,4 @@
-import os
+import os, subprocess
 from typing import Self
 
 
@@ -61,17 +61,23 @@ class File(Path):
         with open(self, 'a', encoding=encoding) as file:
             file.write(string)
 
-    def save(self, string:str, encoding='UTF-16'):
+    def save(self, string:str, encoding='UTF-16') -> Self:
         directory = os.path.dirname(self)
         if not os.path.exists(directory): os.makedirs(directory, exist_ok=True)
         with open(self, 'w', encoding=encoding) as file:
             file.write(string)
+        return self
+
+    def open(self) -> Self:
+        """ Opens in Notepad++ """
+        NOTEPAD_PP = File(C_DRIVE, 'Program Files', 'Notepad++', 'notepad++.exe')
+        subprocess.Popen([NOTEPAD_PP, self])
+        return self
 
     def exists(self) -> Self|False:
         if(os.path.isfile(self)):
             return self
         return None
-
     
     def Exists(path:str, *paths:str) -> str|None:
         """
