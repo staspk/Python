@@ -25,6 +25,8 @@ def print_dict(_dict:dict):
     for key, value in _dict.items():
         print(f'{key}: {value}\n')
 
+def colored_input(string:str, color:ANSI):
+    input(f'{color.value}{string}{ANSI.RESET.value}')
 
 class ANSI(enum.Enum):
     GREEN       = "\033[92m"
