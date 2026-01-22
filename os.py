@@ -1,4 +1,4 @@
-import os, subprocess
+import os, subprocess, pathlib
 from typing import Self
 
 
@@ -75,17 +75,24 @@ class File(Path):
         return self
 
     def exists(self) -> Self|False:
-        if(os.path.isfile(self)):
-            return self
+        if(os.path.isfile(self)): return self
         return None
     
+    def move(self, destination:str) -> Self:
+        """ Will overwrite file at destination, if exists"""
+        if os.path.exists(self):
+            if not os.path.exists(Parent(destination)): os.makedirs(Parent(destination), exist_ok=True)
+            pathlib.Path(self).replace(destination)
+
+    def delete(self) -> Self:
+        if os.path.exists(self): pathlib.Path(self).unlink(self)
+
     def Exists(path:str, *paths:str) -> str|None:
         """
         Returns the `path`, or `False`
         """
         file = os.path.join(path, *paths)
-        if(os.path.isfile(file)):
-            return file
+        if(os.path.isfile(file)): return file
         return None
     
 class LogFile(File):
