@@ -49,19 +49,19 @@ class File(Path):
     """
     inherits `Path` -> allows you to use `File()` constructor instead of `os.path.join`. Is a `str`, at it's core.
     """
-    def fp(self, mode='w', encoding='UTF-16'): return open(self, mode, encoding=encoding)
+    def fp(self, mode='w', encoding='UTF-8'): return open(self, mode, encoding=encoding)
     
-    def contents(self, encoding='UTF-16'):
+    def contents(self, encoding='UTF-8'):
         with open(self, 'r', encoding=encoding) as file:
             return file.read()
         
-    def append(self, string:str, encoding='UTF-16'):
+    def append(self, string:str, encoding='UTF-8'):
         directory = os.path.dirname(self)
         if not os.path.exists(directory): os.makedirs(directory, exist_ok=True)
         with open(self, 'a', encoding=encoding) as file:
             file.write(string)
 
-    def save(self, string:str, encoding='UTF-16') -> Self:
+    def save(self, string:str, encoding='UTF-8') -> Self:
         directory = os.path.dirname(self)
         if not os.path.exists(directory): os.makedirs(directory, exist_ok=True)
         with open(self, 'w', encoding=encoding) as file:
@@ -74,12 +74,12 @@ class File(Path):
         subprocess.Popen([NOTEPAD_PP, self])
         return self
 
-    def exists(self) -> Self|False:
+    def exists(self) -> Self|None:
         if(os.path.isfile(self)): return self
         return None
     
     def move(self, destination:str) -> Self:
-        """ Will overwrite file at destination, if exists"""
+        """ Will overwrite file at destination, if exists """
         if os.path.exists(self):
             if not os.path.exists(Parent(destination)): os.makedirs(Parent(destination), exist_ok=True)
             pathlib.Path(self).replace(destination)
@@ -106,14 +106,17 @@ class Directory(Path):
     """
     inherits `Path` -> allows you to use `Directory()` constructor instead of `os.path.join`. Is a `str`, at it's core.
     """
+    def exists(self) -> Self|None:
+        if(os.path.isdir(self)): return self
+        return None
+    
     @staticmethod
-    def exists(path:str, *paths:str) -> str|None:
+    def Exists(path:str, *paths:str) -> str|None:
         """
         Returns the `path`, or `False`
         """
         dir = os.path.join(path, *paths)
-        if(os.path.isdir(dir)):
-            return dir
+        if(os.path.isdir(dir)): return dir
         return None
     
     @staticmethod
