@@ -15,7 +15,6 @@ def redirect_print_to_file(file:FileDescriptorOrPath, mode:WritableTextMode, pri
         finally:
             sys.stdout = old_stdout
 
-
 def print_dict(_dict:dict):
     """
     Recommended for more complex dicts (but uses repr instead):
@@ -25,8 +24,6 @@ def print_dict(_dict:dict):
     for key, value in _dict.items():
         print(f'{key}: {value}\n')
 
-def colored_input(string:str, color:ANSI):
-    input(f'{color.value}{string}{ANSI.RESET.value}')
 
 class ANSI(enum.Enum):
     GREEN       = "\033[92m"
@@ -46,6 +43,9 @@ class ANSI(enum.Enum):
     ROSE_GOLD   = "\033[38;2;255;196;201m"
     LITE_RED   = "\033[38;2;232;107;118m"
     LITE_GREEN = "\033[38;2;96;223;107m"
+
+def colored_input(string:str, color:ANSI=ANSI.YELLOW):
+    input(f'{color.value}{string}{ANSI.RESET.value}')
 
 
 class Print:
