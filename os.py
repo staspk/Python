@@ -1,4 +1,4 @@
-import os, subprocess, pathlib
+import os, shutil, pathlib, subprocess 
 from typing import Self
 
 
@@ -49,17 +49,18 @@ class File(Path):
     """
     inherits `Path` -> allows you to use `File()` constructor instead of `os.path.join`. Is a `str`, at it's core.
     """
-    def fp(self, mode='w', encoding='UTF-8'): return open(self, mode, encoding=encoding)
+    def fp(self, mode='w', encoding=None): return open(self, mode, encoding=encoding)
     
-    def contents(self, encoding='UTF-8'):
+    def contents(self, encoding=None) -> str:
         with open(self, 'r', encoding=encoding) as file:
             return file.read()
         
-    def append(self, string:str, encoding='UTF-8'):
+    def append(self, string:str, encoding='UTF-8') -> Self:
         directory = os.path.dirname(self)
         if not os.path.exists(directory): os.makedirs(directory, exist_ok=True)
         with open(self, 'a', encoding=encoding) as file:
             file.write(string)
+        return self
 
     def save(self, string:str, encoding='UTF-8') -> Self:
         directory = os.path.dirname(self)
@@ -75,7 +76,7 @@ class File(Path):
         return self
 
     def exists(self) -> Self|None:
-        if(os.path.isfile(self)): return self
+        if os.path.isfile(self): return self
         return None
     
     def move(self, destination:str) -> Self:
@@ -92,46 +93,48 @@ class File(Path):
         Returns the `path`, or `False`
         """
         file = os.path.join(path, *paths)
-        if(os.path.isfile(file)): return file
+        if os.path.isfile(file): return file
         return None
     
 class LogFile(File):
-    def prepend(self, text:str):
-        if File.Exists(self):
-            with open(self, 'r', encoding='utf-8') as file: existing_text = file.read()
-        else: existing_text = ""
-        with open(self, 'w', encoding='utf-8') as file: file.write(text + existing_text)
+    def prepend(self, text:str, encoding='UTF-8'):
+        existing_text = ""
+        if self.exists():
+            existing_text = self.contents(encoding=encoding)
+
+        with open(self, 'w', encoding=encoding) as file:
+            file.write(text + existing_text)
 
 class Directory(Path):
     """
     inherits `Path` -> allows you to use `Directory()` constructor instead of `os.path.join`. Is a `str`, at it's core.
     """
     def exists(self) -> Self|None:
-        if(os.path.isdir(self)): return self
+        if os.path.isdir(self): return self
         return None
     
-    @staticmethod
-    def Exists(path:str, *paths:str) -> str|None:
+    def delete(self) -> Self:
+        if os.path.isdir(self): shutil.rmtree(self)
+    
+    def Exists(path:str, *paths:str) -> str|False:
         """
-        Returns the `path`, or `False`
+        Returns the combined `path`, or `Falsse`
         """
         dir = os.path.join(path, *paths)
-        if(os.path.isdir(dir)): return dir
+        if os.path.isdir(dir): return dir
         return None
     
-    @staticmethod
-    def files(path:str, str:str=None) -> list[File]:
+    def Files(path:str, filter:str=None) -> list[File]:
         """
-        Returns a `List` of `Files`(absolute paths) at `path`. filters by `str in filename`, if `str` not `None`
+        **Returns:**
+            `List<absolute paths>` at `path`. Filters by `[str] in filename`.
 
         **Example:**
-        >>>  if(files := Directory.files(EXTENDED_STREAMING_HISTORY, 'Streaming_History_Audio')):
+        >>>  if files := Directory.files(EXTENDED_STREAMING_HISTORY, 'Streaming_History_Audio'):
         """
         files:list[File] = []
-        if(os.path.exists(path)):
+        if os.path.exists(path):
             for file in os.listdir(path):
-                if (str):
-                    if str in file: files.append(File(os.path.join(path, file)))
-                else:
-                    files.append(File(os.path.join(path, file)))
+                if filter and filter in file: files.append(File(path, file))
+                else:                         files.append(File(path, file))
         return files
