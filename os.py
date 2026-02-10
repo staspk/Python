@@ -1,5 +1,5 @@
-import os, shutil, pathlib, subprocess 
-from typing import Self
+import os, shutil, pathlib, subprocess, pickle
+from typing import Any, Self
 
 
 C_DRIVE = "C:\\"
@@ -58,16 +58,35 @@ class File(Path):
     def append(self, string:str, encoding='UTF-8') -> Self:
         directory = os.path.dirname(self)
         if not os.path.exists(directory): os.makedirs(directory, exist_ok=True)
+
         with open(self, 'a', encoding=encoding) as file:
             file.write(string)
+
         return self
 
     def save(self, string:str, encoding='UTF-8') -> Self:
         directory = os.path.dirname(self)
         if not os.path.exists(directory): os.makedirs(directory, exist_ok=True)
+
         with open(self, 'w', encoding=encoding) as file:
             file.write(string)
+
         return self
+    
+    def save_binary(self, obj:Any) -> Self:
+        """ Uses pickle, btw """
+        directory = os.path.dirname(self)
+        if not os.path.exists(directory): os.makedirs(directory, exist_ok=True)
+
+        with open(self, 'wb') as file:
+            pickle.dump(obj, file)
+
+        return self
+    
+    def load_binary(self) -> Any:
+        """ Uses pickle, btw """
+        with open(self, 'rb') as file:
+            return pickle.load(file)
 
     def open(self) -> Self:
         """ Opens in Notepad++ """
