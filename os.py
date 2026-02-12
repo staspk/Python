@@ -135,6 +135,7 @@ class Directory(Path):
     def delete(self) -> Self:
         if os.path.isdir(self): shutil.rmtree(self)
     
+    @staticmethod
     def Exists(path:str, *paths:str) -> str|False:
         """
         Returns the combined `path`, or `Falsse`
@@ -143,6 +144,7 @@ class Directory(Path):
         if os.path.isdir(dir): return dir
         return None
     
+    @staticmethod
     def Files(path:str, filter:str=None) -> list[File]:
         """
         **Returns:**
