@@ -1,4 +1,3 @@
-from datetime import datetime
 import time
 from .print import Print
 
@@ -25,18 +24,3 @@ class Timer:
             Print.yellow(f'Operation timed at: {elapsed:.3f}ms')
 
         Timer.start_time = None
-
-class Time:
-    def local_time() -> str:
-        """
-        returns local_time in format:\n
-        `2025-03-18 16:30:55`
-        """
-        return datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-    
-    def local_time_as_legal_filename() -> str:
-        """
-        returns local_time in format that won't throw exception if used as filename:\n
-        `2025-03-18 16:30:55`
-        """
-        return datetime.now().strftime('%Y-%m-%d %H.%M.%S')
