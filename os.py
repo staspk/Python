@@ -2,8 +2,6 @@ import os, shutil, pathlib, subprocess, pickle
 from typing import Any, Optional, Self
 
 
-type abs_path = str
-
 C_DRIVE = "C:\\"
 def WINDOWS_APPDATA(): return os.getenv("APPDATA")
 
@@ -54,6 +52,14 @@ class File(Path):
     """
     inherits `Path` -> allows you to use `File()` constructor instead of `os.path.join`. Is a `str`, at it's core.
     """
+    @property
+    def parent(self) -> Directory:
+        return Directory(pathlib.Path(self).parent)
+    
+    @property
+    def name(self) -> str:
+        return pathlib.Path(self).parts[-1]
+    
     def fp(self, mode='w', encoding=None): return open(self, mode, encoding=encoding)
     
     def contents(self, encoding=None) -> str:
@@ -128,19 +134,24 @@ class Directory(Path):
     @property
     def parent(self) -> Directory:
         return Directory(pathlib.Path(self).parent)
+    
+    def ensure_parents(self) -> Self:
+        os.makedirs(self.parent, exist_ok=True)
+        return self
 
-    def files(self, filter:Optional[str]=None) -> list[abs_path]:
+    def files(self, filter:Optional[str]=None) -> list[File]:
         """
         **Returns:**
-            Files at `path` as a list of absolute paths. Use `filter` to target a substring in filename.
+            Files at `path`. Can `filter` via substring in filename.
 
         **Example:**
         >>>  if files := Directory(EXTENDED_STREAMING_HISTORY).files('Streaming_History_Audio'):
         """
         files:list[str] = []
         for path in os.scandir(self):
+            path.name
             if path.is_file():
-                if filter and filter in path.path: files.append(File(path.path))
+                if filter and filter in path.name: files.append(File(path.path))
                 else:                              files.append(File(path.path))
 
         return files
@@ -158,3 +169,4 @@ class Directory(Path):
 
     def delete(self) -> Self:
         if os.path.isdir(self): shutil.rmtree(self)
+        return self
