@@ -43,7 +43,10 @@ class Path(str):
         >>>  Path(SPOTIFY_USER_DATA_DIR, self.name, 'Spotify Extended Streaming History')
     """
     def __new__(cls, path, *paths:str):
-        return super(Path, cls).__new__(cls, os.path.join(path, *paths))
+        return super(Path, cls).__new__(cls, os.path.join(path, *(path for path in paths if path is not None)))
+    
+    def exists(self):
+        return os.path.exists(self)
 
 class File(Path):
     """
@@ -128,14 +131,21 @@ class Directory(Path):
     """
     inherits `Path` -> allows you to use `Directory()` constructor instead of `os.path.join`. Is a `str`, at it's core.
     """
+    @property
+    def parent(self) -> Directory:
+        return Directory(pathlib.Path(self).parent)
+
     def exists(self) -> Self|None:
         if os.path.isdir(self): return self
         return None
     
+    def empty(self) -> Self|None:
+        """ i.e: no files in directory """
+        return self if not any(pathlib.Path(self).iterdir()) else None
+
     def delete(self) -> Self:
         if os.path.isdir(self): shutil.rmtree(self)
     
-    @staticmethod
     def Exists(path:str, *paths:str) -> str|False:
         """
         Returns the combined `path`, or `Falsse`
@@ -144,11 +154,10 @@ class Directory(Path):
         if os.path.isdir(dir): return dir
         return None
     
-    @staticmethod
     def Files(path:str, filter:str=None) -> list[File]:
         """
         **Returns:**
-            `List<absolute paths>` at `path`. Filters by `[str] in filename`.
+            `List<absolute paths>` at `path`. Can `filter` by `[str] in filename`.
 
         **Example:**
         >>>  if files := Directory.files(EXTENDED_STREAMING_HISTORY, 'Streaming_History_Audio'):
