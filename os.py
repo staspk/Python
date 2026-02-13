@@ -1,6 +1,8 @@
 import os, shutil, pathlib, subprocess, pickle
-from typing import Any, Self
+from typing import Any, Optional, Self
 
+
+type abs_path = str
 
 C_DRIVE = "C:\\"
 def WINDOWS_APPDATA(): return os.getenv("APPDATA")
@@ -109,14 +111,6 @@ class File(Path):
 
     def delete(self) -> Self:
         if os.path.exists(self): pathlib.Path(self).unlink(self)
-
-    def Exists(path:str, *paths:str) -> str|None:
-        """
-        Returns the `path`, or `False`
-        """
-        file = os.path.join(path, *paths)
-        if os.path.isfile(file): return file
-        return None
     
 class LogFile(File):
     def prepend(self, text:str, encoding='UTF-8'):
@@ -135,6 +129,25 @@ class Directory(Path):
     def parent(self) -> Directory:
         return Directory(pathlib.Path(self).parent)
 
+    def files(self, filter:Optional[str]=None) -> list[abs_path]:
+        """
+        **Returns:**
+            Files at `path` as a list of absolute paths. Use `filter` to target a substring in filename.
+
+        **Example:**
+        >>>  if files := Directory(EXTENDED_STREAMING_HISTORY).files('Streaming_History_Audio'):
+        """
+        files:list[str] = []
+        for path in os.scandir(self):
+            if path.is_file():
+                if filter and filter in path.path: files.append(File(path.path))
+                else:                              files.append(File(path.path))
+
+        return files
+
+    def parts(self) -> tuple[str, ...]:
+        return pathlib.Path(self).parts
+
     def exists(self) -> Self|None:
         if os.path.isdir(self): return self
         return None
@@ -145,26 +158,3 @@ class Directory(Path):
 
     def delete(self) -> Self:
         if os.path.isdir(self): shutil.rmtree(self)
-    
-    def Exists(path:str, *paths:str) -> str|False:
-        """
-        Returns the combined `path`, or `Falsse`
-        """
-        dir = os.path.join(path, *paths)
-        if os.path.isdir(dir): return dir
-        return None
-    
-    def Files(path:str, filter:str=None) -> list[File]:
-        """
-        **Returns:**
-            `List<absolute paths>` at `path`. Can `filter` by `[str] in filename`.
-
-        **Example:**
-        >>>  if files := Directory.files(EXTENDED_STREAMING_HISTORY, 'Streaming_History_Audio'):
-        """
-        files:list[File] = []
-        if os.path.exists(path):
-            for file in os.listdir(path):
-                if filter and filter in file: files.append(File(path, file))
-                else:                         files.append(File(path, file))
-        return files

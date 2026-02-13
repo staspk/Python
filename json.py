@@ -11,16 +11,17 @@ class Json(File):
         Json(PROJECT_DIR, jsons, 'data.json').save(Response.json())
     ```
     """
+    def load(self):
+        with open(self, 'r', encoding='UTF-8') as file:
+            return JSON.load(file)
+        
     def save(self, json:Any):
         """
         - `json` - usually the result of `requests.get(url).json()`
         """
         JSON.dump(json, self.fp(encoding='UTF-8'), indent=2, ensure_ascii=False)
 
-    def load(self):
-        with open(self, 'r', encoding='UTF-8') as file:
-            return JSON.load(file)
-
+    @staticmethod
     def Load(path:str, encoding='UTF-8'):
         """
         returns data via `json.load(file)`
@@ -29,7 +30,7 @@ class Json(File):
             return JSON.load(file)
 
     @staticmethod
-    def exists(path:str, *paths:str, encoding='UTF-8') -> Any | None:
+    def Exists(path:str, *paths:str, encoding='UTF-8') -> Any | None:
         """
         Utility method for opening files, loading json data in one line.
 
@@ -41,4 +42,3 @@ class Json(File):
         if(os.path.isfile(file)):
             return Json.Load(file, encoding)
         return None
-    
