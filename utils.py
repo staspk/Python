@@ -1,17 +1,5 @@
-import sys, os
-import random, string
+import os
 
-
-def ScriptArg_1(default_value=None) -> str:
-    """
-    returns `sys.argv[1]`, default_value, or raises Exception if both are missing
-    """
-    if len(sys.argv) < 2:
-        if default_value is not None:
-            return default_value
-        raise Exception(f"sys.argv[1] does not exist && no default_value passed into ScriptArg_1. len(sys.argv): {len(sys.argv)}")
-    
-    return sys.argv[1]
 
 def try_parse_int(to_parse:any) -> int | None:
     try:
