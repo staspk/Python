@@ -64,6 +64,9 @@ def colored_input(string:str, color:ANSI=ANSI.YELLOW):
 
 
 class Print:
+    def Args():
+        Print.yellow(sys.argv)
+
     def list(list:list, color:ANSI=None, flip=False):
         """
         `flip` - i.e: `descending`/`ascending` order
@@ -85,7 +88,7 @@ class Print:
             print(f"{ANSI.GREEN}{text}{ANSI.RESET}", end='\n' if new_line else "")
         else:
             print(text, end='\n' if new_line else "")
-            
+      
     def yellow(text:str, new_line=True):
         """
         ANSI codes are stripped if `sys.stdout` is not a `terminal`.
