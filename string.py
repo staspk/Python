@@ -28,3 +28,9 @@ class String:
         if not string or string.isspace():
             return True
         return False
+
+
+class List:
+    @staticmethod
+    def From(string:str, separator=",") -> list[str]:
+        return list(string.split(separator))
