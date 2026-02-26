@@ -1,5 +1,4 @@
 import sys
-from typing import Any
 from kozubenko.print import Print
 
 
@@ -25,6 +24,33 @@ def Arg1(value="", *, required=True) -> str:
 
     if arg1.exists():
         return sys.argv[1]
+    
+    if required is False:
+        return ""
+    
+    raise Exception("Arg1(): Unexpected Runtime Path")
+
+def Arg2(value="", *, required=True) -> str:
+    """
+    **EXAMPLE:**
+    ```python
+    from kozubenko import script
+    search:str = script.Arg1()
+    search:str = script.Arg1("Angel of the Lord")  # force value
+    search:str = script.Arg1(required=False) or "Angel of the Lord"  # Arg1 preferred, default value if missing
+    ```
+    """
+    arg2 = arg(2)
+
+    if value:
+        return value
+
+    if arg2.missing() and required is True:
+        Print.red('Arg1 Missing!')
+        sys.exit(1)
+
+    if arg2.exists():
+        return sys.argv[2]
     
     if required is False:
         return ""
